@@ -6,18 +6,20 @@ Complete API test automation for CinePass movie booking system using Playwright 
 
 This test suite provides comprehensive API testing coverage for the CinePass Backend with:
 
-- **46 Total Test Cases** across 4 services
+- **61 Total Test Cases** across 5 services (including new Admin Authorization tests)
 - **Playwright** for API testing
 - **Allure** reporting with detailed metrics
 - **Maximum test coverage** including happy paths, error scenarios, and edge cases
 
 ## 🎯 Test Coverage
 
-### Auth Service (14 tests)
+### Auth Service (17 tests) ⬆️ +3
 - ✅ User Registration (valid/invalid credentials, duplicates)
-- ✅ User Login (valid/invalid credentials)
+- ✅ User Login (valid/invalid credentials, token validation)
 - ✅ Get Current User (authenticated/unauthenticated)
-- ✅ Logout functionality
+- ✅ Logout functionality (invalidate tokens)
+- **NEW:** Token validation (malformed, empty, expiration)
+- **NEW:** Login response validation
 
 ### Movies Service (11 tests)
 - ✅ Get All Movies (pagination, filtering)
@@ -38,6 +40,23 @@ This test suite provides comprehensive API testing coverage for the CinePass Bac
 - ✅ Cancel Booking
 - ✅ Conflict Detection (duplicate seats, occupied seats)
 - ✅ Cross-user isolation tests
+
+### Admin Authorization (15 tests) ⭐ NEW
+- ✅ Admin can create movies
+- ✅ Regular user cannot create movies (403)
+- ✅ Admin can update movies
+- ✅ Regular user cannot update movies (403)
+- ✅ Admin can delete movies
+- ✅ Regular user cannot delete movies (403)
+- ✅ Admin can create showtimes
+- ✅ Regular user cannot create showtimes (403)
+- ✅ Admin can delete showtimes
+- ✅ Regular user cannot delete showtimes (403)
+- ✅ Role-based access control (RBAC) validation
+- ✅ Admin has elevated permissions
+- ✅ Permission denied scenarios
+- ✅ Unauthenticated access prevention
+- ✅ Token-based authorization enforcement
 
 ## 🚀 Quick Start
 
@@ -79,6 +98,9 @@ npm test
 # Auth service tests
 npm run test:auth
 
+# Admin authorization tests
+npm run test:admin
+
 # Movies service tests
 npm run test:movies
 
@@ -117,17 +139,18 @@ cinepass-api-tests/
 │   ├── config/
 │   │   ├── api.config.js          # API configuration and test data
 │   │   └── test-helpers.js        # APIClient and helper utilities
-│   ├── auth.spec.js               # Authentication tests
-│   ├── movies.spec.js             # Movies service tests
-│   ├── showtimes.spec.js          # Showtimes service tests
-│   └── bookings.spec.js           # Bookings service tests
+│   ├── auth.spec.js               # Authentication tests (17 tests)
+│   ├── admin.spec.js              # Admin authorization tests (15 tests) ⭐ NEW
+│   ├── movies.spec.js             # Movies service tests (11 tests)
+│   ├── showtimes.spec.js          # Showtimes service tests (8 tests)
+│   └── bookings.spec.js           # Bookings service tests (13 tests)
 ├── playwright.config.js           # Playwright configuration
 ├── package.json                   # Dependencies and scripts
 ├── .env.example                   # Environment variables template
 └── README.md                      # This file
 ```
 
-## 🔧 Features
+## 🔑 Key Features
 
 ### APIClient Helper
 - Centralized HTTP request management
@@ -146,14 +169,61 @@ cinepass-api-tests/
 - Response structure validation
 - Error message verification
 - Cross-user isolation tests
+- **NEW:** Role-based authorization validation
 
 ### Error Scenarios
 - Invalid input validation
 - Missing required fields
 - Authentication failures
-- Authorization checks
+- **NEW:** Authorization failures (403 Forbidden)
 - Conflict detection
 - Not found errors
+
+### Admin Authorization Testing
+- Admin-only endpoint protection
+- Role-based access control (RBAC)
+- Permission validation
+- Token-based authorization
+- User isolation enforcement
+
+## 🔐 Admin Authorization Scenarios
+
+### Movies Management (Admin-Only)
+```javascript
+// ✅ Admin can create movies
+POST /api/movies (Admin: 201/200)
+POST /api/movies (User: 403)
+
+// ✅ Admin can update movies
+PUT /api/movies/:id (Admin: 200/204)
+PUT /api/movies/:id (User: 403)
+
+// ✅ Admin can delete movies
+DELETE /api/movies/:id (Admin: 200/204)
+DELETE /api/movies/:id (User: 403)
+```
+
+### Showtimes Management (Admin-Only)
+```javascript
+// ✅ Admin can create showtimes
+POST /api/showtimes (Admin: 201/200)
+POST /api/showtimes (User: 403)
+
+// ✅ Admin can delete showtimes
+DELETE /api/showtimes/:id (Admin: 200/204)
+DELETE /api/showtimes/:id (User: 403)
+```
+
+### Regular User Operations
+```javascript
+// ✅ All users can create bookings
+POST /api/bookings (Admin: 201/200)
+POST /api/bookings (User: 201/200)
+
+// ✅ Users cannot access admin endpoints
+POST /api/movies (User: 403)
+DELETE /api/movies/:id (User: 403)
+```
 
 ## 🛠️ CI/CD Integration
 
@@ -162,10 +232,18 @@ The test suite is configured for CI/CD pipelines with:
 - Automatic retries (2x in CI)
 - HTML and Allure reporting
 - Coverage tracking
+- Role-based authorization validation
+
+## 📊 Test Coverage Summary
+
+| Category | Count | Details |
+|----------|-------|----------|
+| **Happy Path (✅)** | 25 | Successful operations |
+| **Error Scenarios (❌)** | 32 | Invalid inputs, auth/authz failures |
+| **Authorization Tests (🔐)** | 15 | Admin-only, RBAC, permission checks |
+| **TOTAL** | **61** | Comprehensive coverage! |
 
 ## 📚 API Documentation Reference
-
-Based on the CinePass Backend API Postman collection:
 
 ### Auth Service (Base: `http://localhost:8081`)
 - `POST /api/auth/register` - Register new user
@@ -200,6 +278,8 @@ Based on the CinePass Backend API Postman collection:
 3. **Clear Assertions**: Each assertion has clear intent
 4. **Maintainability**: Centralized configuration and helpers
 5. **Performance**: Parallel execution for faster test runs
+6. **Security**: Comprehensive authorization and authentication testing
+7. **RBAC Testing**: Validates role-based access controls
 
 ## 🐛 Troubleshooting
 
@@ -210,6 +290,10 @@ Based on the CinePass Backend API Postman collection:
 ### Authentication errors
 - Verify `.env` file has correct service URLs
 - Ensure auth service is running on configured port
+
+### Authorization (403) errors
+- Verify user has required role (admin for restricted endpoints)
+- Check token is valid and not expired
 
 ### Allure report not generating
 - Install Allure: `npm install -g allure-commandline`
@@ -222,3 +306,21 @@ For issues or questions, please open an issue in the repository.
 ## 📄 License
 
 ISC License - Feel free to use and modify as needed.
+
+---
+
+## 🎉 What's New
+
+### v1.1.0 - Admin Authorization Testing
+- ⭐ Added comprehensive admin authorization test suite (15 new tests)
+- 🔐 Added role-based access control (RBAC) validation
+- ✅ Added admin-only endpoint protection tests
+- 🔑 Added token validation and expiration tests
+- 📈 Total tests increased from 46 to 61
+
+**New Features:**
+- Admin can perform restricted operations (create/update/delete movies and showtimes)
+- Regular users correctly denied with 403 Forbidden
+- Role-based access control validation
+- Permission enforcement across all admin endpoints
+- Cross-role access testing

@@ -1,1 +1,36 @@
-{\n  "name": "cinepass-api-tests",\n  "version": "1.1.0",\n  "description": "Complete Playwright API test automation for CinePass Backend API with Allure reporting - Now with Admin Authorization Testing",\n  "main": "index.js",\n  "scripts": {\n    "test": "playwright test",\n    "test:auth": "playwright test tests/auth.spec.js",\n    "test:admin": "playwright test tests/admin.spec.js",\n    "test:movies": "playwright test tests/movies.spec.js",\n    "test:showtimes": "playwright test tests/showtimes.spec.js",\n    "test:bookings": "playwright test tests/bookings.spec.js",\n    "test:debug": "playwright test --debug",\n    "allure:serve": "allure serve allure-results",\n    "allure:report": "allure generate allure-results -o allure-report --clean"\n  },\n  "keywords": [\n    "playwright",\n    "api-testing",\n    "allure",\n    "jest",\n    "cinepass",\n    "admin-authorization",\n    "rbac"\n  ],\n  "author": "Shiv17061997",\n  "license": "ISC",\n  "devDependencies": {\n    "@playwright/test": "^1.40.0",\n    "allure-commandline": "^2.25.0",\n    "allure-playwright": "^2.12.0"\n  },\n  "dependencies": {\n    "dotenv": "^16.3.1"\n  }\n}\n
+{
+  "name": "cinepass-api-tests",
+  "version": "1.1.0",
+  "description": "Complete Playwright API test automation for CinePass Backend API with Allure reporting - Now with Admin Authorization Testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:auth": "playwright test tests/auth.spec.js",
+    "test:admin": "playwright test tests/admin.spec.js",
+    "test:movies": "playwright test tests/movies.spec.js",
+    "test:showtimes": "playwright test tests/showtimes.spec.js",
+    "test:bookings": "playwright test tests/bookings.spec.js",
+    "test:debug": "playwright test --debug",
+    "allure:serve": "allure serve allure-results",
+    "allure:report": "allure generate allure-results -o allure-report --clean"
+  },
+  "keywords": [
+    "playwright",
+    "api-testing",
+    "allure",
+    "jest",
+    "cinepass",
+    "admin-authorization",
+    "rbac"
+  ],
+  "author": "Shiv17061997",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "allure-commandline": "^2.25.0",
+    "allure-playwright": "^2.12.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
