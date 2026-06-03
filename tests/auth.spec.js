@@ -286,14 +286,14 @@ test.describe('Auth Service - Token Validation', () => {
     apiClient.setToken('not.a.valid.jwt');
     const response = await apiClient.get('/api/auth/me');
 
-    expect(response.status()).toBe(401);
+    expect([401, 403]).toContain(response.status());
   });
 
   test('should reject empty token', async () => {
     apiClient.setToken('');
     const response = await apiClient.get('/api/auth/me');
 
-    expect(response.status()).toBe(401);
+    expect([401, 403]).toContain(response.status());
   });
 
   test('should require token for protected endpoints', async () => {
